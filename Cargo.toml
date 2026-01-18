@@ -1,0 +1,33 @@
+[package]
+name = "ad-report"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+printpdf = "0.7"
+clap = { version = "4.5", features = ["derive"] }
+tokio = { version = "1.40", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+rpassword = "7.3"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+regex = "1.10"
+
+# Platform-specific ldap3 configuration
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.52", features = ["Win32_Security_Authentication_Identity", "Win32_Security_Credentials", "Win32_Foundation"] }
+# Windows: ldap3 with GSSAPI support for Kerberos authentication
+ldap3 = { version = "0.11", features = ["gssapi"] }
+
+[target.'cfg(not(windows))'.dependencies]
+# Non-Windows: ldap3 without GSSAPI (for cross-compilation or Linux/macOS development)
+ldap3 = "0.11"
+
+[features]
+# GSSAPI/Kerberos authentication support (Windows only)
+# This is a marker feature to enable GSSAPI-related code compilation
+# Windows builds automatically enable this, other platforms can explicitly enable it
+gssapi = []
